@@ -1,13 +1,13 @@
-import SignIn from "../components/signIn";
+import SignUp from "../components/signUp";
 
-const LogPage = () => {
+const SignUpPage = () => {
   return (
     <>
       <div className="w-screen h-screen max-w-full max-h-full flex justify-center items-center">
-        <SignIn />
+        <SignUp />
       </div>
     </>
   );
 };
 
-export default LogPage;
+export default SignUpPage;
