@@ -1,5 +1,7 @@
 import { useFormContext } from "../context/formContext";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const SignForm = () => {
   const {
@@ -9,9 +11,18 @@ const SignForm = () => {
     handlePasswordChange,
     password,
     email,
-    handleSubmit,
+    handleSignUp,
     handleLogin,
+    response,
   } = useFormContext();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (response === 200) {
+      navigate("/home");
+    }
+  }, [response, navigate]);
 
   return (
     <form action="" className="flex justify-center h-2/5 w-full">
@@ -40,7 +51,7 @@ const SignForm = () => {
         />
         <div>
           {isSignUp ? (
-            <button onClick={handleSubmit} className="btn btn-primary">
+            <button onClick={handleSignUp} className="btn btn-primary">
               Sign Up
             </button>
           ) : (
