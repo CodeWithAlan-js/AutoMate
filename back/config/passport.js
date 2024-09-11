@@ -35,6 +35,9 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await userModel.findById(id);
+    if (!user) {
+      return done(null, false);
+    }
     user.password = undefined;
     done(null, user);
   } catch (error) {

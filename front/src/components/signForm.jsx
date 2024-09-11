@@ -1,4 +1,4 @@
-import { useFormContext } from "../context/formContext";
+import { useUserContext } from "../context/userContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -11,10 +11,12 @@ const SignForm = () => {
     handlePasswordChange,
     password,
     email,
+    handleLogIn,
     handleSignUp,
-    handleLogin,
     response,
-  } = useFormContext();
+  } = useUserContext();
+
+  console.log(response);
 
   const navigate = useNavigate();
 
@@ -55,7 +57,7 @@ const SignForm = () => {
               Sign Up
             </button>
           ) : (
-            <button onClick={handleLogin} className="btn btn-primary">
+            <button onClick={handleLogIn} className="btn btn-primary">
               Login
             </button>
           )}

@@ -35,3 +35,12 @@ export const login = (req, res, next) => {
     });
   })(req, res, next);
 };
+
+export const logout = (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(400).json({ message: "Error logging out" });
+    }
+  });
+  res.status(200).json({ message: "Logged out" });
+};

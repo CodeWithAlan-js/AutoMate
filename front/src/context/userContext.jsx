@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-const FormContext = createContext();
+const UserContext = createContext();
 
-export const FormProvider = ({ children }) => {
+export const UserProvider = ({ children }) => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("alan@gmail.com");
+  const [password, setPassword] = useState("test");
   const [error, setError] = useState("");
   const [response, setResponse] = useState("");
   const [user, setUser] = useState(null);
@@ -34,25 +34,33 @@ export const FormProvider = ({ children }) => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:3000/api/auth/register", {
-        email,
-        password,
-      });
+      await axios.post(
+        "http://localhost:3001/api/auth/register",
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
     } catch (error) {
-      setError(error.response.data.message);
       console.log(error);
     }
   };
 
-  const handleLogin = async (e) => {
+  const handleLogIn = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        "http://localhost:3001/api/auth/login",
         {
           email,
           password,
+        },
+        {
+          withCredentials: true,
         }
       );
       const status = response.status;
@@ -66,13 +74,24 @@ export const FormProvider = ({ children }) => {
     }
   };
 
-  const handleLogOut = () => {
-    setUser(null);
-    localStorage.removeItem("user");
+  const handleLogOut = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/api/auth/logout",
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Logout response:", response.data);
+      setUser(null);
+      localStorage.removeItem("user");
+    } catch (error) {
+      console.log("Logout error:", error);
+    }
   };
 
   return (
-    <FormContext.Provider
+    <UserContext.Provider
       value={{
         isSignUp,
         toggleForm,
@@ -82,17 +101,17 @@ export const FormProvider = ({ children }) => {
         email,
         password,
         handleSignUp,
-        handleLogin,
+        handleLogIn,
         error,
         response,
         user,
       }}
     >
       {children}
-    </FormContext.Provider>
+    </UserContext.Provider>
   );
 };
 
-export const useFormContext = () => {
-  return useContext(FormContext);
+export const useUserContext = () => {
+  return useContext(UserContext);
 };
