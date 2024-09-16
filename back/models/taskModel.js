@@ -6,36 +6,22 @@ const taskSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  ownerDetails: {
+    lastName: { type: String, required: true },
+    firstName: { type: String, required: true },
+    phone: { type: String, required: true },
+  },
   vehicle: {
-    brand: {
-      type: String,
-      required: true,
-    },
-    model: {
-      type: String,
-      required: true,
-    },
-    licencePlate: {
-      type: String,
-      required: true,
-    },
+    brand: { type: String, required: true },
+    model: { type: String, required: true },
+    licencePlate: { type: String, required: true },
     repairDetails: {
-      description: {
-        type: String,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
-      expectedTime: {
-        type: Date,
-        required: true,
-      },
-      completed: {
-        type: Boolean,
-        required: true,
-      },
+      diagnostic: { type: String, required: true },
+      partToOrder: { type: String },
+      ordered: { type: Boolean },
+      price: { type: Number },
+      expectedTime: { type: Date, required: true },
+      completed: { type: Boolean },
     },
   },
 });

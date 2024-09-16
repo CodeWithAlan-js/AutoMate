@@ -1,11 +1,11 @@
 import { useUserTaskContext } from "../context/userTaskContext";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 const TaskDisplay = () => {
-  const { task, error } = useUserTaskContext();
+  const { task, error, isVisible, handleVisibility } = useUserTaskContext();
 
   return (
     <div>
-      <h1 className="text-black">Task Display</h1>
       {error && <p className="text-red-500">{error}</p>}
       {task.length > 0 ? (
         <ul>
@@ -43,7 +43,12 @@ const TaskDisplay = () => {
           ))}
         </ul>
       ) : (
-        <h2 className="text-black">No tasks to display</h2>
+        <div className="flex w-screen h-screen justify-center items-center flex-col">
+          <h2 className="text-black">Click on the plus to add a vehicle</h2>
+          <button onClick={handleVisibility}>
+            <IoIosAddCircleOutline size={46} />
+          </button>
+        </div>
       )}
     </div>
   );
