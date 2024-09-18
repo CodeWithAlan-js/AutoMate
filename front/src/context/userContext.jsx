@@ -5,11 +5,12 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("alan@gmail.com");
-  const [password, setPassword] = useState("test");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [user, setUser] = useState(null);
   const [logInResponse, setLogInResponse] = useState(null);
+  const [signUpResponse, setSignUpResponse] = useState(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -27,11 +28,13 @@ export const UserProvider = ({ children }) => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:3001/api/auth/register",
         { email, password },
         { withCredentials: true }
       );
+      console.log(response);
+      setSignUpResponse(response.data.message);
     } catch (error) {
       setError(error.response?.data?.message || "Sign Up Error");
     }
@@ -50,7 +53,7 @@ export const UserProvider = ({ children }) => {
       setLogInResponse(response.status);
     } catch (error) {
       setError(error.response?.data?.message || "Login Error");
-      throw error; // Lance l'erreur pour la gestion dans le composant
+      throw error;
     }
   };
 
@@ -79,6 +82,7 @@ export const UserProvider = ({ children }) => {
         handleLogIn,
         handleLogOut,
         logInResponse,
+        signUpResponse,
         setLogInResponse,
         error,
         user,

@@ -7,13 +7,13 @@ const TaskDisplay = () => {
   const { task, error } = useUserTaskContext();
 
   return (
-    <div className="min-h-screen  flex flex-col">
+    <div className="min-h-screen flex flex-col w-screen justify-center items-center">
       <h1 className="text-3xl mt-32 mb-4 flex justify-center underline underline-offset-4 italic">
         Vehicles
       </h1>
       {error && <p className="text-red-500">{error}</p>}
       {task.length > 0 ? (
-        <ul>
+        <ul className="lg:flex justify-around pl-6 pr-6 lg:w-full flex-wrap items-center ">
           {task.map((taskItem) => (
             <li
               className={`card card-compact bg-base-100 p-6 w-96 gap-2 mb-10 border ${

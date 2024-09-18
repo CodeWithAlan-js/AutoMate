@@ -2,6 +2,7 @@ import { useUserContext } from "../context/userContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import logo from "../assets/logo.svg";
 
 const SignForm = () => {
   const {
@@ -11,9 +12,11 @@ const SignForm = () => {
     handlePasswordChange,
     password,
     email,
+    error,
     handleLogIn,
     handleSignUp,
     logInResponse,
+    signUpResponse,
     setLogInResponse,
   } = useUserContext();
 
@@ -28,14 +31,13 @@ const SignForm = () => {
 
   return (
     <form action="" className="flex justify-center h-2/5 w-full">
-      <div className="w-2/5 flex flex-col justify-evenly">
+      <div className=" flex flex-col justify-evenly">
         <div>
-          <h1 className="text-primary text-3xl">
-            {isSignUp ? "Sign Up" : "Login"}
+          <h1 className="text-primary text-2xl">
+            <img src={logo} alt="logo" className="h-12" />
+            Welcome to Automate
           </h1>
-          <p className="text-black">
-            Organise your holidays with complete peace of mind
-          </p>
+          <p className="text-black">The ultimate tool for garages </p>
         </div>
         <input
           type="text"
@@ -45,19 +47,29 @@ const SignForm = () => {
           onChange={handleEmailChange}
         />
         <input
-          type="text"
+          type="password"
           className="input input-bordered w-full bg-white text-black border-black"
           placeholder="Password"
           onChange={handlePasswordChange}
           value={password}
         />
+        {error && <p className="text-red-500">{error}</p>}
         <div>
           {isSignUp ? (
-            <button onClick={handleSignUp} className="btn btn-primary">
-              Sign Up
-            </button>
+            <div>
+              <p className="text-green-600 mb-2">{signUpResponse}</p>
+              <button
+                onClick={handleSignUp}
+                className="btn btn-primary text-white mb-2"
+              >
+                Sign Up
+              </button>
+            </div>
           ) : (
-            <button onClick={handleLogIn} className="btn btn-primary">
+            <button
+              onClick={handleLogIn}
+              className="btn btn-primary text-white mb-2"
+            >
               Login
             </button>
           )}
@@ -70,8 +82,12 @@ const SignForm = () => {
             </p>
           ) : (
             <p className="text-black">
-              New to Planify?{" "}
-              <Link className="text-black" to="/register" onClick={toggleForm}>
+              New to Automate?{" "}
+              <Link
+                className="text-black underline decoration-primary"
+                to="/register"
+                onClick={toggleForm}
+              >
                 Sign Up
               </Link>
             </p>

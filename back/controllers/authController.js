@@ -11,22 +11,32 @@ export const register = catchErrors(async (req, res) => {
     return res.status(400).json({ message: "User already exists" });
   }
 
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
   const user = await userModel.create({ email, password });
-  console.log(user);
 
   user.password = undefined;
 
-  res.status(201).json({ user });
+  res.status(201).json({ message: "User created successfully" });
 });
 
 export const login = (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
     }
     if (!user) {
-      return res.status(401).json({ message: info.message });
+      const message = info.message || "Authentication failed";
+      return res.status(401).json({ message });
     }
+
     req.logIn(user, (err) => {
       if (err) {
         return next(err);

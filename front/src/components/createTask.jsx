@@ -77,7 +77,7 @@ const CreateTask = () => {
         <div className="w-full z-20 h-full top-0 fixed bg-black bg-opacity-40 flex justify-center items-center">
           <div
             ref={formRef}
-            className="w-4/5 h-4/5 bg-white overflow-auto rounded"
+            className="w-4/5 h-4/5 bg-white md:w-3/6 overflow-auto rounded"
           >
             <div className="flex justify-between items-center p-4">
               <h2 className="text-xl">Add a vehicle</h2>
