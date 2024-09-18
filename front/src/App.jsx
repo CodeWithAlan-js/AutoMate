@@ -7,18 +7,18 @@ import { UserTaskProvider } from "./context/userTaskContext";
 
 function App() {
   return (
-    <UserProvider>
-      <UserTaskProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <UserProvider>
+        <UserTaskProvider>
           <Routes>
             <Route path="/" element={<LogPage />} />
             <Route path="/register" element={<LogPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="*" element={<Page404 />} />
           </Routes>
-        </BrowserRouter>
-      </UserTaskProvider>
-    </UserProvider>
+        </UserTaskProvider>
+      </UserProvider>
+    </BrowserRouter>
   );
 }
 

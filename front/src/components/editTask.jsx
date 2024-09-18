@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUserTaskContext } from "../context/userTaskContext";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { carBrands } from "../utils";
@@ -6,22 +6,29 @@ import Select from "react-select";
 import InputField from "./inputField";
 import SectionTitle from "./sectionTitle";
 
-const CreateTask = () => {
+const EditTask = () => {
   const {
     isVisible,
     handleVisibility,
     handleFieldChange,
-    handleAddTask,
+    handleUpdateTask,
     taskData,
+    fetchTaskById,
+    updateId,
   } = useUserTaskContext();
 
   const [errors, setErrors] = useState({});
-
   const { ownerDetails, vehicle } = taskData;
 
   const brandOptions = carBrands
     .sort()
     .map((brand) => ({ value: brand, label: brand }));
+
+  useEffect(() => {
+    if (updateId) {
+      fetchTaskById(updateId);
+    }
+  }, [updateId, fetchTaskById]);
 
   const validateFields = () => {
     const newErrors = {};
@@ -52,21 +59,22 @@ const CreateTask = () => {
 
   const submitTask = () => {
     if (validateFields()) {
-      handleAddTask();
+      handleUpdateTask(updateId);
     }
   };
 
   return (
     <>
       {isVisible && (
-        <div className="w-full z-20 h-full top-0 fixed bg-black bg-opacity-40 flex justify-center items-center">
+        <div className="w-full z-20 h-full absolute bg-black bg-opacity-40 flex justify-center items-center">
           <div className="w-4/5 h-4/5 bg-white overflow-auto">
             <div className="flex justify-between items-center p-4">
-              <h2 className="text-xl">Add a vehicle</h2>
+              <h2 className="text-xl">Update vehicle</h2>
               <button onClick={handleVisibility}>
                 <IoCloseCircleOutline size={40} />
               </button>
             </div>
+
             <div>
               <form>
                 <div className="flex flex-col p-8">
@@ -243,7 +251,7 @@ const CreateTask = () => {
                     placeholder="Completed"
                     className="checkbox ml-4"
                     onChange={(e) =>
-                      handleCheckboxChange(e, "vehicle.repairDetails.completed")
+                      handleFieldChange(e, "vehicle.repairDetails.completed")
                     }
                   />
                 </div>
@@ -253,7 +261,7 @@ const CreateTask = () => {
                     type="button"
                     className="btn btn-outline"
                   >
-                    Add
+                    Update
                   </button>
                 </div>
               </form>
@@ -265,4 +273,4 @@ const CreateTask = () => {
   );
 };
 
-export default CreateTask;
+export default EditTask;

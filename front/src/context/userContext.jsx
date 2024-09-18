@@ -8,8 +8,8 @@ export const UserProvider = ({ children }) => {
   const [email, setEmail] = useState("alan@gmail.com");
   const [password, setPassword] = useState("test");
   const [error, setError] = useState("");
-  const [response, setResponse] = useState("");
   const [user, setUser] = useState(null);
+  const [logInResponse, setLogInResponse] = useState(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -18,75 +18,51 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const toggleForm = () => {
-    setIsSignUp(!isSignUp);
-  };
+  const toggleForm = () => setIsSignUp((prev) => !prev);
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
+  const handleEmailChange = (e) => setEmail(e.target.value);
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
+  const handlePasswordChange = (e) => setPassword(e.target.value);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-
     try {
       await axios.post(
         "http://localhost:3001/api/auth/register",
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
+        { email, password },
+        { withCredentials: true }
       );
     } catch (error) {
-      console.log(error);
+      setError(error.response?.data?.message || "Sign Up Error");
     }
   };
 
   const handleLogIn = async (e) => {
     e.preventDefault();
-
     try {
       const response = await axios.post(
         "http://localhost:3001/api/auth/login",
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
+        { email, password },
+        { withCredentials: true }
       );
-      const status = response.status;
-      setResponse(status);
-      const user = response.data.user;
-      setUser(user);
-      localStorage.setItem("user", JSON.stringify(user));
+      setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      setLogInResponse(response.status);
     } catch (error) {
-      setError(error.response.data.message);
-      console.log(error);
+      setError(error.response?.data?.message || "Login Error");
+      throw error; // Lance l'erreur pour la gestion dans le composant
     }
   };
 
   const handleLogOut = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/api/auth/logout",
-        {
-          withCredentials: true,
-        }
-      );
-      console.log("Logout response:", response.data);
+      await axios.get("http://localhost:3001/api/auth/logout", {
+        withCredentials: true,
+      });
       setUser(null);
       localStorage.removeItem("user");
     } catch (error) {
-      console.log("Logout error:", error);
+      setError(error.response?.data?.message || "Logout Error");
     }
   };
 
@@ -97,13 +73,14 @@ export const UserProvider = ({ children }) => {
         toggleForm,
         handleEmailChange,
         handlePasswordChange,
-        handleLogOut,
         email,
         password,
         handleSignUp,
         handleLogIn,
+        handleLogOut,
+        logInResponse,
+        setLogInResponse,
         error,
-        response,
         user,
       }}
     >
@@ -112,6 +89,4 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-export const useUserContext = () => {
-  return useContext(UserContext);
-};
+export const useUserContext = () => useContext(UserContext);

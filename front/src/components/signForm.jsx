@@ -13,18 +13,18 @@ const SignForm = () => {
     email,
     handleLogIn,
     handleSignUp,
-    response,
+    logInResponse,
+    setLogInResponse,
   } = useUserContext();
-
-  console.log(response);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (response === 200) {
+    if (logInResponse === 200) {
       navigate("/home");
     }
-  }, [response, navigate]);
+    setLogInResponse(null);
+  }, [setLogInResponse, logInResponse, navigate]);
 
   return (
     <form action="" className="flex justify-center h-2/5 w-full">

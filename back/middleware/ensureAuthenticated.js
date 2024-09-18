@@ -3,7 +3,7 @@ const ensureAuthenticated = (req, res, next) => {
     return next();
   }
   res.status(401).json({
-    message: "You need to be logged innnnn",
+    message: "You need to be logged in",
   });
 };
 
