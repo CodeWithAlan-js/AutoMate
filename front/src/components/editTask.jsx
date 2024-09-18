@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUserTaskContext } from "../context/userTaskContext";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { carBrands } from "../utils";
@@ -8,14 +8,16 @@ import SectionTitle from "./sectionTitle";
 
 const EditTask = () => {
   const {
-    isVisible,
-    handleVisibility,
+    isEditVisible,
+    handleEditVisibility,
     handleFieldChange,
     handleUpdateTask,
     taskData,
     fetchTaskById,
     updateId,
   } = useUserTaskContext();
+
+  const formRef = useRef(null);
 
   const [errors, setErrors] = useState({});
   const { ownerDetails, vehicle } = taskData;
@@ -63,14 +65,25 @@ const EditTask = () => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (formRef.current && !formRef.current.contains(e.target)) {
+        handleEditVisibility();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [formRef, handleEditVisibility]);
+
   return (
     <>
-      {isVisible && (
-        <div className="w-full z-20 h-full absolute bg-black bg-opacity-40 flex justify-center items-center">
-          <div className="w-4/5 h-4/5 bg-white overflow-auto">
+      {isEditVisible && (
+        <div className="w-full z-20 h-full fixed top-0 bg-black bg-opacity-40 flex justify-center items-center">
+          <div ref={formRef} className="w-4/5 h-4/5 bg-white overflow-auto">
             <div className="flex justify-between items-center p-4">
               <h2 className="text-xl">Update vehicle</h2>
-              <button onClick={handleVisibility}>
+              <button onClick={handleEditVisibility}>
                 <IoCloseCircleOutline size={40} />
               </button>
             </div>

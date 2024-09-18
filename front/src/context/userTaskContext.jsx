@@ -36,6 +36,27 @@ const initialTaskData = {
 
 const taskReducer = (state, action) => {
   switch (action.type) {
+    case "RESET_TASK":
+      return {
+        ownerDetails: {
+          lastName: "",
+          firstName: "",
+          phone: "",
+        },
+        vehicle: {
+          brand: "",
+          model: "",
+          licencePlate: "",
+          repairDetails: {
+            diagnostic: "",
+            partToOrder: "",
+            ordered: false,
+            price: 0,
+            expectedTime: new Date(),
+            completed: false,
+          },
+        },
+      };
     case "UPDATE_FIELD": {
       const { name, value } = action.payload;
       const keys = name.split(".");
@@ -49,8 +70,6 @@ const taskReducer = (state, action) => {
 
       return newState;
     }
-    case "RESET_TASK":
-      return initialTaskData;
     case "SET_TASK_DATA":
       return { ...state, ...action.payload };
     default:
@@ -61,14 +80,23 @@ const taskReducer = (state, action) => {
 export const UserTaskProvider = ({ children }) => {
   const [task, setTask] = useState([]);
   const [error, setError] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
+  const [isCreateVisible, setIsCreateVisible] = useState(false);
+  const [isEditVisible, setIsEditVisible] = useState(false);
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
   const [updateId, setUpdateId] = useState(null);
 
   const { user } = useUserContext();
   const [taskData, dispatch] = useReducer(taskReducer, initialTaskData);
+
+  const handleCreateVisibility = useCallback(() => {
+    setIsCreateVisible((prev) => !prev);
+    dispatch({ type: "RESET_TASK" });
+  }, []);
+
+  const handleEditVisibility = useCallback(() => {
+    setIsEditVisible((prev) => !prev);
+  }, []);
 
   const fetchTasks = useCallback(async () => {
     if (user) {
@@ -96,9 +124,11 @@ export const UserTaskProvider = ({ children }) => {
         }
       );
       setModalIsVisible(true);
+      setIsCreateVisible(false);
       setModalMessage(response.data.message);
       setTimeout(() => setModalIsVisible(false), 2000);
       dispatch({ type: "RESET_TASK" });
+      console.log("Task Data after reset:", taskData);
     } catch (error) {
       setError(error.response?.data?.message || "An error occurred");
     }
@@ -117,6 +147,7 @@ export const UserTaskProvider = ({ children }) => {
         setModalIsVisible(true);
         setModalMessage(response.data.message);
         setTimeout(() => setModalIsVisible(false), 2000);
+        dispatch({ type: "RESET_TASK" });
       } catch (error) {
         console.log(error);
       }
@@ -150,8 +181,7 @@ export const UserTaskProvider = ({ children }) => {
       );
       dispatch({ type: "SET_TASK_DATA", payload: response.data.task });
       setUpdateId(id);
-      setIsEditing(true);
-      setIsVisible(true);
+      setIsEditVisible(true);
     } catch (error) {
       console.log(error);
     }
@@ -162,10 +192,6 @@ export const UserTaskProvider = ({ children }) => {
     const inputValue = type === "checkbox" ? checked : value;
     dispatch({ type: "UPDATE_FIELD", payload: { name, value: inputValue } });
   };
-
-  const handleVisibility = useCallback(() => {
-    setIsVisible((prev) => !prev);
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -202,17 +228,18 @@ export const UserTaskProvider = ({ children }) => {
       value={{
         task,
         error,
-        isVisible,
         taskData,
         handleFieldChange,
         handleAddTask,
-        handleVisibility,
+        isCreateVisible,
+        handleCreateVisibility,
+        isEditVisible,
+        handleEditVisibility,
         handleUpdateTask,
         handleDeleteTask,
         fetchTaskById,
         modalMessage,
         modalIsVisible,
-        isEditing,
         updateId,
         setUpdateId,
       }}

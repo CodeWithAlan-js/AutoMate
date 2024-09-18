@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useUserTaskContext } from "../context/userTaskContext";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { carBrands } from "../utils";
@@ -8,12 +8,13 @@ import SectionTitle from "./sectionTitle";
 
 const CreateTask = () => {
   const {
-    isVisible,
-    handleVisibility,
+    isCreateVisible,
+    handleCreateVisibility,
     handleFieldChange,
     handleAddTask,
     taskData,
   } = useUserTaskContext();
+  const formRef = useRef(null);
 
   const [errors, setErrors] = useState({});
 
@@ -56,14 +57,31 @@ const CreateTask = () => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (formRef.current && !formRef.current.contains(e.target)) {
+        handleCreateVisibility();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleCreateVisibility]);
+
   return (
     <>
-      {isVisible && (
+      {isCreateVisible && (
         <div className="w-full z-20 h-full top-0 fixed bg-black bg-opacity-40 flex justify-center items-center">
-          <div className="w-4/5 h-4/5 bg-white overflow-auto">
+          <div
+            ref={formRef}
+            className="w-4/5 h-4/5 bg-white overflow-auto rounded"
+          >
             <div className="flex justify-between items-center p-4">
               <h2 className="text-xl">Add a vehicle</h2>
-              <button onClick={handleVisibility}>
+              <button onClick={handleCreateVisibility}>
                 <IoCloseCircleOutline size={40} />
               </button>
             </div>
@@ -243,7 +261,7 @@ const CreateTask = () => {
                     placeholder="Completed"
                     className="checkbox ml-4"
                     onChange={(e) =>
-                      handleCheckboxChange(e, "vehicle.repairDetails.completed")
+                      handleFieldChange(e, "vehicle.repairDetails.completed")
                     }
                   />
                 </div>

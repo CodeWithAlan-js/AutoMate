@@ -6,7 +6,7 @@ import Modal from "../components/modal";
 import { useUserTaskContext } from "../context/userTaskContext";
 
 const HomePage = () => {
-  const { modalIsVisible, isEditing } = useUserTaskContext();
+  const { modalIsVisible, isEditVisible } = useUserTaskContext();
 
   return (
     <>
@@ -14,7 +14,7 @@ const HomePage = () => {
       <div className="w-screen  flex justify-center items-center">
         <TaskDisplay />
         {modalIsVisible && <Modal />}
-        {isEditing ? <EditTask /> : <CreateTask />}
+        {isEditVisible ? <EditTask /> : <CreateTask />}
       </div>
     </>
   );
